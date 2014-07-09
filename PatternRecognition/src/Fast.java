@@ -12,8 +12,8 @@ public class Fast {
         int n = in.readInt();
         Point[] origins = new Point[n];
         Point[] points;
-        Point[] startPoints = new Point[n];
-        int startPIndex = 0;
+        //Point[] startPoints = new Point[n];
+        //int startPIndex = 0;
 
         if (n <= 0) {
             throw new IllegalArgumentException(
@@ -26,20 +26,19 @@ public class Fast {
             int x = in.readInt();
             int y = in.readInt();
             origins[i] = new Point(x, y);
-            //origins[i].draw();
+            origins[i].draw();
         }
 
         Arrays.sort(origins);
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n - 3; i++) {
             int segIndex = 1;
-            boolean pointAdded = false;
-            Double slopeSeg = 0.0;
-            Double slopeSeg1 = 0.0;
-            Double slopeSeg2 = 0.0;
-            points = Arrays.copyOfRange(origins, i, n);
+            //boolean pointAdded = false;
+            double slopeSeg = 0.0;
+            double slopeSeg1 = 0.0;
+            double slopeSeg2 = 0.0;
+            points = Arrays.copyOf(origins, n);
 
-            origins[i].draw();
             Arrays.sort(points, origins[i].SLOPE_ORDER);
 
             if (segIndex < points.length - 2) {
@@ -53,10 +52,10 @@ public class Fast {
                         && Double.compare(slopeSeg, slopeSeg2) == 0) {
 
                     boolean lineCounted = false;
-                    for (int j = 0; j < startPIndex; j++) {
-                        if (origins[i].SLOPE_ORDER.compare(
-                                points[segIndex],
-                                startPoints[j]) == 0) {
+                    for (int j = 0; j < i/* startPIndex */; j++) {
+                        //double slopeToIJ = origins[i].slopeTo(startPoints[j]);
+                        //if (Double.compare(slopeSeg, slopeToIJ) == 0) {
+                        if (points[segIndex].compareTo(origins[j]) == 0) {
                             lineCounted = true;
                             break;
                         }
@@ -69,18 +68,18 @@ public class Fast {
                              k++) {
                             System.out.printf("%s -> ", points[k]);
                             segIndex++;
+                            slopeSeg = slopeSeg1;
+                            slopeSeg1 = slopeSeg2;
                             if (segIndex < points.length - 2) {
-                                slopeSeg = slopeSeg1;
-                                slopeSeg1 = slopeSeg2;
                                 slopeSeg2 = origins[i].slopeTo((points[segIndex + 2]));
                             }
                         }
-                        pointAdded = true;
+                        //pointAdded = true;
                         origins[i].drawTo(points[segIndex]);
                         System.out.printf("%s%n", points[segIndex++]);
+                        slopeSeg = slopeSeg1;
+                        slopeSeg1 = slopeSeg2;
                         if (segIndex < points.length - 2) {
-                            slopeSeg = slopeSeg1;
-                            slopeSeg1 = slopeSeg2;
                             slopeSeg2 = origins[i].slopeTo((points[segIndex + 2]));
                         }
                     } else {
@@ -89,12 +88,15 @@ public class Fast {
                             slopeSeg = origins[i].slopeTo(points[segIndex]);
                             slopeSeg1 = origins[i].slopeTo(points[segIndex + 1]);
                             slopeSeg2 = origins[i].slopeTo(points[segIndex + 2]);
-                            while (segIndex < points.length - 2
-                                   && Double.compare(slopeSeg, slopeSeg1) == 0) {
+                            while (Double.compare(slopeSeg, slopeSeg1) == 0) {
                                 segIndex++;
                                 slopeSeg = slopeSeg1;
                                 slopeSeg1 = slopeSeg2;
-                                slopeSeg2 = origins[i].slopeTo(points[segIndex + 2]);
+                                if (segIndex < points.length - 2) {
+                                    slopeSeg2 = origins[i].slopeTo(points[segIndex + 2]);
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -107,9 +109,9 @@ public class Fast {
                     }
                 }
             }
-            if (pointAdded) {
+/*            if (pointAdded) {
                 startPoints[startPIndex++] = origins[i];
-            }
+            }*/
         }
     }
 }

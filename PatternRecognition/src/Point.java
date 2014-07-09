@@ -18,10 +18,13 @@ public class Point implements Comparable<Point> {
 
         @Override
         public int compare(Point o1, Point o2) {
+            nComparatorCalls++;
             return Double.compare(slopeTo(o1), slopeTo(o2));
         }
     }
 
+    private static int nSlopeToCalls = 0;
+    private static int nComparatorCalls = 0;
     // compare points by slope
     public final Comparator<Point> SLOPE_ORDER = new SlopeComparator();
 
@@ -50,6 +53,7 @@ public class Point implements Comparable<Point> {
     // slope between this point and that point
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
+        nSlopeToCalls++;
         if (this.x == that.x) {
             if (this.y == that.y) {
                 return Double.NEGATIVE_INFINITY;
